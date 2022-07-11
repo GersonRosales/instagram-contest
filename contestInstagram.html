@@ -45,11 +45,13 @@
 		var curl = document.getElementById('curl').value
 		var sleepTime = document.getElementById('sleepTime').value
 
-		splitContacts(contacts, groups)
+		curl = curl.replace("'comment_text=qwerty&replied_to_comment_id='", '"comment_text=$i&replied_to_comment_id="')
 
-		var text = `#!/bin/bash \nfor i in '${contacts}'\ndo\n  echo "Contest : $i \n"\n  echo $(date)\n  ${curl}\n  sleep ${sleepTime}\n  echo "\\n\\n\\n"\ndone\necho "Contest has end!"`
+		var result = splitContacts(contacts, groups)
 
-		const file = new File([text], 'new-note.sh', {
+		var text = `#!/bin/bash \nfor i in ${result}\ndo\n  echo "Contest : $i \n"\n  echo $(date)\n  ${curl}\n  sleep ${sleepTime}\n  echo "\\n\\n\\n"\ndone\necho "Contest has end!"`
+
+		const file = new File([text], 'script.sh', {
 	  		type: 'text/plain',
 		})
 
@@ -61,24 +63,27 @@
 	}
 
 	function splitContacts(contacts, num) {
-		let groupOfContacts = ""
-		let listaNombres = contacts.split(' ')
-		listaNombres.forEach(element => {
-			console.log(element)
-			groupOfContacts.concat(groupOfContacts, ' '+element)
-			console.log(groupOfContacts)			
+		let groupOfContacts = "'"
+		let nameList = contacts.split(' ')
+		let mod = nameList.length % num
+		let i = 0
+		
+		nameList.forEach(element => {
+			i++
+			groupOfContacts = groupOfContacts.concat(element)
+
+			if (num == i) {
+				groupOfContacts = groupOfContacts.concat("' '")
+				i = 0
+			} else {
+				groupOfContacts = groupOfContacts.concat(' ')
+			}
 		})
+
+		if (mod > 0) {
+			groupOfContacts = groupOfContacts.concat("'")
+		}
+
+		return groupOfContacts
 	}
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
