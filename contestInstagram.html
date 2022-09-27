@@ -22,36 +22,27 @@
 </style>
 
 <body>
-	<p>Contacts</p>
-  	<p><textarea name="contacts" id="contacts" placeholder="Enter the contacts"></textarea></p>
-
-	<p>Num of Groups</p>
-  	<p><textarea name="groups" id="groups" placeholder="Number of groups of the contacts, for example: two by two or three by three"></textarea></p>
-
 	<p>Curl</p>
   	<p><textarea name="curl" id="curl" placeholder="Enter the curl"></textarea></p>
 
 	<p>Sleep</p>
   	<p><textarea name="sleepTime" id="sleepTime" placeholder="Sleep time in sec">60</textarea></p>
 
-	<a id="button" class="button" href="" onclick="return theFunction();">Create Script</a>
+	<a id="button" class="button" href="" onclick="return createScript()">Create Script</a>
 </body>
 </html>
 
 <script type="text/javascript">
-	function theFunction() {
-		var contacts = document.getElementById('contacts').value
-		var groups = document.getElementById('groups').value
+	function createScript() {
 		var curl = document.getElementById('curl').value
 		var sleepTime = document.getElementById('sleepTime').value
 
-		curl = curl.replace("'comment_text=qwerty&replied_to_comment_id='", '"comment_text=$i&replied_to_comment_id="')
+		curl = curl.replace("'comment_text=Hello'", '"comment_text=$i"')
+		console.log(`curl : ${curl}`)
 
-		var result = splitContacts(contacts, groups)
+		var text = `#!/bin/bash \nwhile read i\ndo\n  echo "Item : $i \n"\n  echo $(date)\n  ${curl}\n  sleep ${sleepTime}\n  echo "\\n\\n\\n"\ndone < comment_list.txt \necho "Contest has end!"`
 
-		var text = `#!/bin/bash \nfor i in ${result}\ndo\n  echo "Contest : $i \n"\n  echo $(date)\n  ${curl}\n  sleep ${sleepTime}\n  echo "\\n\\n\\n"\ndone\necho "Contest has end!"`
-
-		const file = new File([text], 'script.sh', {
+		const file = new File([text], 'auto_comment.sh', {
 	  		type: 'text/plain',
 		})
 
@@ -60,30 +51,5 @@
 
 		link.href = url
 		link.download = file.name
-	}
-
-	function splitContacts(contacts, num) {
-		let groupOfContacts = "'"
-		let nameList = contacts.split(' ')
-		let mod = nameList.length % num
-		let i = 0
-		
-		nameList.forEach(element => {
-			i++
-			groupOfContacts = groupOfContacts.concat(element)
-
-			if (num == i) {
-				groupOfContacts = groupOfContacts.concat("' '")
-				i = 0
-			} else {
-				groupOfContacts = groupOfContacts.concat(' ')
-			}
-		})
-
-		if (mod > 0) {
-			groupOfContacts = groupOfContacts.concat("'")
-		}
-
-		return groupOfContacts
 	}
 </script>
